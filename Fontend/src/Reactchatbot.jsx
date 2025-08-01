@@ -119,7 +119,7 @@ function getBotReply(userInput) {
         formData.append("file", blob, "chat-history.pdf");
     
         try {
-          const response = await fetch("http://localhost:5000/send-email", {
+          const response = await fetch("https://chatbot-84am.onrender.com/send-email", {
             method: "POST",
             body: formData,
           });
