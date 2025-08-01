@@ -3,6 +3,10 @@ const express = require("express");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
+require('dotenv').config();
+const PORT = process.env.PORT || 5000;
+
+
 
 const app = express();
 const upload = multer();
@@ -38,6 +42,6 @@ app.post("/send-email", upload.single("file"), async (req, res) => {
   }
 });
 
-app.listen(5000, () => {
-  console.log("✅ Email server running on http://localhost:5000");
+app.listen(PORT, () => {
+  console.log(`✅ Email server running on http://localhost:${PORT}`);
 });
