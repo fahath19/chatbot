@@ -7,7 +7,7 @@ app.use(cors());
 const Client=require("./model/client");
 const Jobseeker=require("./model/jobseeker")
 
-
+const PORT2 = process.env.PORT || 3000;
 
 
 // Sample POST Route to Save Client
@@ -59,8 +59,8 @@ app.post('/api/job', async (req, res) => {
 mongodb().then(()=>{
       console.log("database connected");
       
-    app.listen(3000,()=>{
-        console.log("server is started");
+    app.listen(PORT2,()=>{
+      console.log(`✅ Email server running on http://localhost:${PORT2}`);
         
     })}
 )
