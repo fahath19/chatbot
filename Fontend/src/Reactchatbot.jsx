@@ -10,7 +10,9 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable'; 
 import pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
-
+import Collectinfo from './Collectinfo';
+import { formQuestions,formjobQuestions } from './utils/company';
+import Spinner from './animation/Spinner';
 // Set fonts for pdfMake
 pdfMake.vfs = pdfFonts?.default?.pdfMake?.vfs;
 
@@ -19,22 +21,79 @@ const Reactchatbot = () => {
      
     const [chathistory,setchathistory]=useState([]);
     const [showchatbot,setshowchatbot]=useState([false]);
+    const [isuserclicked,setuserclicked]=useState(false);
+    const [questype,setquestype]=useState()
+    const [formMessages, setFormMessages] = useState([]);
+    const [formStep, setFormStep] = useState(0);
+    const [formData, setFormData] = useState({});
+    const chatbodyRef=useRef();
 
-const chatbodyRef=useRef();
 
 
+
+//SWITCH TO GET DATA FROM USER OR CLIENT
+
+const handleservice = (serviceName,type) => {
+
+ setquestype(type);
+
+ if(type =="job"){
+
+  
+    setuserclicked(true);
+  
+  setFormStep(0); // reset step in case they fill again
+
+  // Save service name directly into form data
+  setFormData(prev => ({
+    ...prev,
+    service: serviceName
+  }));
+
+  // Start conversation with first question
+  setFormMessages([
+    { role: "model", text: formjobQuestions[0].question }
+  ]);
+ }
+
+
+ else{
+  setuserclicked(true);
+  setFormStep(0); // reset step in case they fill again
+
+  // Save service name directly into form data
+  setFormData(prev => ({
+    ...prev,
+    service: serviceName
+  }));
+
+  // Start conversation with first question
+  setFormMessages([
+    { role: "model", text: formQuestions[0].question }
+  ]);
+ }
+
+  
+  
+};
+
+
+// const handlejob = (jobroles)=>{
+//         console.log(jobroles);
+        
+// }
+
+
+
+// CHATBOT REPLY FUNCION  START
 
 function getBotReply(userInput) {
     const flows = wezanBotinfo.flows;
-    const allBotReplies = [
-      ...flows.clientProjectInquiry,
-      ...flows.jobSeekerInquiry
-    ];
   
     // ✅ Ensure userInput is a string
     const input = String(userInput).toLowerCase().trim();
   
-    const match = allBotReplies.find(entry =>
+    const match = flows.find(entry =>
       entry.role === "bot" &&
       entry.intent.toLowerCase().includes(input)
     );
@@ -42,12 +101,14 @@ function getBotReply(userInput) {
     return match ? match.replies : ["🤖 Oops! Please check your message and try again."];
   }
 
+// CHATBOT REPLY FUNCION  END
 
+
+  // GENERATE BOT FUNCTION RESPONSE START
 
 
     const generateBotResponse=async (history)=>{
 
-// HELPER FUNCTION O UPDATE CHAT HISTORY
          
 
 
@@ -56,18 +117,32 @@ function getBotReply(userInput) {
     
          }
     
+
         const historyy=history.map(({role,text})=>({role,parts:[{text}]}));
+
         const usermsg=historyy[history.length-1].parts[0].text;
         
-        console.log(usermsg);
+        // console.log(usermsg);
         
 
         const result =getBotReply(usermsg);
+        
+        
+        
+        setTimeout(()=>{
+          updateHistory(result)
 
-         updateHistory(result)
+        },700 )
+
+
+
          console.log(chathistory);
          
-       // ✅ Auto download & send if end of chat
+
+
+
+   // ✅ Auto download & send if end of chat
+
     if (usermsg.includes("thanks")) {
       setTimeout(() => {
          exportChatAsTextPDF(chathistory);
@@ -75,6 +150,13 @@ function getBotReply(userInput) {
     }
 
     }
+
+
+  // GENERATE BOT FUNCTION RESPONSE END
+
+
+
+  //PDF GENRATER FUNCTION START 
 
     // ---------------------------------------------
 
@@ -136,14 +218,16 @@ function getBotReply(userInput) {
     };
 
     //---------------------------------
+  //PDF GENRATER FUNCTION END 
     
 
 
 
     useEffect(()=>{
         chatbodyRef.current.scrollTo({top: chatbodyRef.current.scrollHeight, behavior:"smooth"})
-      
-    },[chathistory])
+        window.handleservice = handleservice;
+        // window.handlejob=handlejob;
+    },[chathistory,formMessages])
 
 
 
@@ -173,31 +257,57 @@ function getBotReply(userInput) {
             {/* CHATBOT BODY */}
 
             <div className='chatbot-body' ref={chatbodyRef}>
-                <div className="message bot-message">
+
+
+
+              {
+
+                   isuserclicked ? <div >
+                       <h2 className='mb-[1rem] text-center' >{ questype=="job" ? "Apply for a Job" : "Service Enquiry Form"}</h2>
+                   {
+                    formMessages?.map((chat,index)=>(
+                        <ChatMessage key={index} chat={chat}   />
+                    ))
+                   }
+                </div>
+                   
+                   :
+
+
+                  <div>
+                       <div className="message bot-message">
                 <TbMessageChatbotFilled className='text-[1.5rem]'/>
                  <p className="message-text">
-                 👋 Hi! I'm Wezan chatbot, your virtual assistant 🤖. Let me know how I can assist you today! 💡
+                 👋Hi! I'm Wezan chatbot,how may I assist you? <br/>💼 Job descriptions  <br/>📦 Project enquiries
                  </p>
 
                 </div>
 
                 {/* RENDER THE CHACT */}
                 <div >
-
+                   
                    {
                     chathistory.map((chat,index)=>(
-                        <ChatMessage key={index} chat={chat} />
+                        <ChatMessage key={index} chat={chat}   />
                     ))
                    }
                 </div>
+                  </div>
+              }
+
+
+             
               
 
             </div>
 
             {/* CHATBOT footer */}
             <div className='chat-footer'>
-                
-                 <Chatuserform chathistory={chathistory} setchathistory={setchathistory} generateBotResponse={generateBotResponse}/>
+                 
+                    {
+                      isuserclicked ? <Chatuserform questype={questype} isuserclicked={isuserclicked} formData={formData} setFormData={setFormData} formStep={formStep}  setFormStep={setFormStep} formMessages={formMessages} setFormMessages={setFormMessages} setuserclicked={setuserclicked} chathistory={chathistory} setchathistory={setchathistory}/> :<Chatuserform chathistory={chathistory} setchathistory={setchathistory} generateBotResponse={generateBotResponse}/>
+                    }
+                 
             </div>
 
         </div>
