@@ -19,9 +19,11 @@
 
 body{
     width: 100%;
-   
     min-height: 100vh;
+}
+.container{
     background: linear-gradient(#F4F0FF,#DACDFF);
+
 }
 
 #chatbot-toggler{
@@ -117,6 +119,7 @@ body{
   font-size: 0.9rem;
 }
 .chatbot-body .bot-message .message-text{
+    margin-top: 1rem;
     background: #F6F2FF;
     border-radius: 13px 13px 13px 3px;
 }

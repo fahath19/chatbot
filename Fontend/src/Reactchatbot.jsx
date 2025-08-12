@@ -27,7 +27,7 @@ const Reactchatbot = () => {
     const [formStep, setFormStep] = useState(0);
     const [formData, setFormData] = useState({});
     const chatbodyRef=useRef();
-
+    
 
 
 
@@ -95,7 +95,7 @@ function getBotReply(userInput) {
   
     const match = flows.find(entry =>
       entry.role === "bot" &&
-      entry.intent.toLowerCase().includes(input)
+      entry.intent.toLowerCase().includes(input )
     );
   
     return match ? match.replies : ["🤖 Oops! Please check your message and try again."];
@@ -106,16 +106,16 @@ function getBotReply(userInput) {
 
   // GENERATE BOT FUNCTION RESPONSE START
 
+  const updateHistory=(text)=>{
+    setchathistory(prev=>[...prev.filter(msg=>msg.text !=="Thinking..."),{role:"model",text}])
 
+ }
     const generateBotResponse=async (history)=>{
 
          
 
 
-        const updateHistory=(text)=>{
-            setchathistory(prev=>[...prev.filter(msg=>msg.text !=="Thinking..."),{role:"model",text}])
-    
-         }
+       
     
 
         const historyy=history.map(({role,text})=>({role,parts:[{text}]}));
@@ -219,7 +219,16 @@ function getBotReply(userInput) {
 
     //---------------------------------
   //PDF GENRATER FUNCTION END 
-    
+ const Diplayinformation=(data)=>{
+  console.log(data);
+  
+ const result= getBotReply(data)
+        
+  setTimeout(()=>{
+    updateHistory(result)
+
+  },300 )
+ }
 
 
 
@@ -262,7 +271,7 @@ function getBotReply(userInput) {
 
               {
 
-                   isuserclicked ? <div >
+                   isuserclicked ? <div>
                        <h2 className='mb-[1rem] text-center' >{ questype=="job" ? "Apply for a Job" : "Service Enquiry Form"}</h2>
                    {
                     formMessages?.map((chat,index)=>(
@@ -275,11 +284,13 @@ function getBotReply(userInput) {
 
 
                   <div>
-                       <div className="message bot-message">
+                       <div className="message bot-message mb-[1rem]">
                 <TbMessageChatbotFilled className='text-[1.5rem]'/>
-                 <p className="message-text">
-                 👋Hi! I'm Wezan chatbot,how may I assist you? <br/>💼 Job descriptions  <br/>📦 Project enquiries
-                 </p>
+                 <div className="message-text">
+                  <h2>👋Hi! I'm Wezan chatbot,how may I assist you? </h2>
+                  <button className='servicebtn !border-blue-600 hover:!border-black' onClick={()=>Diplayinformation('job descriptions')}> Job descriptions</button><br/>   
+                  <button className='servicebtn !border-blue-600 hover:!border-black' onClick={()=>Diplayinformation('Project Enquiries')}>Project enquiries</button> 
+                 </div>
 
                 </div>
 

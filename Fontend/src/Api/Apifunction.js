@@ -5,7 +5,7 @@ export const projectapi= async (formData)=>{
 
 
     try{
-    const response= await fetch("http://localhost:3000/api/project", {
+    const response= await fetch("https://chatbot-9xlk.onrender.com/api/project", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -33,7 +33,7 @@ export const jobapi= async (formData)=>{
 
 
   try{
-  const response= await fetch("http://localhost:3000/api/job", {
+  const response= await fetch("https://chatbot-9xlk.onrender.com/api/job", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

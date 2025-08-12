@@ -51,8 +51,30 @@ app.post('/api/job', async (req, res) => {
 });
 
 
+// TO GET ALL DATA FROM CLIENT DATABASE
+
+app.get("/api/clientdata",async (req,res)=>{
+   try{
+         const clientdata=await Client.find();
+         res.send(clientdata)
+   }
+   catch(err){
+       res.send("Something Problem..")
+   }
+})
 
 
+// TO GET ALL DATA FROM Jobseeker DATABASE
+
+app.get("/api/jobseeker",async (req,res)=>{
+  try{
+        const clientdata=await Jobseeker.find();
+        res.send(clientdata)
+  }
+  catch(err){
+      res.send("Something Problem..")
+  }
+})
 
 // SERVER STARTING 
 
