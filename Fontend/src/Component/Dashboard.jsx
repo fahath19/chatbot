@@ -7,7 +7,7 @@ const Dashboard = ()=>{
 
             try{
                 
-                const response=await fetch("http://localhost:3000/api/jobseeker");
+                const response=await fetch("https://chatbot-9xlk.onrender.com/api/jobseeker");
                 if(!response.ok) { 
                     console.log("error in handleapi");
                 }
@@ -27,7 +27,7 @@ const Dashboard = ()=>{
         setclientclicked(true)
         try{
             
-            const response=await fetch("http://localhost:3000/api/clientdata");
+            const response=await fetch("https://chatbot-9xlk.onrender.com/api/clientdata");
             if(!response.ok) { 
                 console.log("error in handleapi");
             }
